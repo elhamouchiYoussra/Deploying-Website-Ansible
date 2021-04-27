@@ -1,2 +1,1 @@
-# deployingWebsiteAnsible
-deploying website using ansible technology
+# deploying a Websites using Ansible technology 
