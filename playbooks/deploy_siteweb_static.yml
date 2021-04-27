@@ -1,0 +1,8 @@
+---
+- name: Deploy website static
+  hosts: serveur
+  become: yes
+  become_method: sudo
+  roles:
+    - { role: ../roles/nginx }
+    - { role: ../roles/deploy_siteweb}

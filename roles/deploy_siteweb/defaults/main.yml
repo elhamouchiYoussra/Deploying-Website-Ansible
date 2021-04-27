@@ -1,0 +1,9 @@
+---
+# defaults file for deploy_siteweb
+
+root_dist: /var/www
+root_dir:  /var/www/auditnord
+nginx_user: www-data
+web_site_name: auditnord
+web_site_src: auditnord
+domaine_name: auditnord.net

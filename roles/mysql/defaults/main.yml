@@ -1,0 +1,6 @@
+---
+# defaults file for mysql
+
+database_name: tronico
+mysql_root_password:
+default_mysql_port: 3306

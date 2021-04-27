@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# This script is for pushing regular MySQL backups to github
+# the authentication to github is via ssh keys || so gen-sshkeys then send pubkey to github
+# This script must be deployed as cron job in /etc/crontab
+
+GIT_REPO="backup-mysql-auditnord"
+GIT_USER="mednourconsulting"
+# Backup storage directory
+backupfolder=/var/backups
+DIR_NAME=$(pwd)
+# MySQL user
+MYSQL_USER="root"
+
+# MySQL password
+MYSQL_PASSWD={{ default_mysql_root_password }}
+
+# Number of days to store the backup
+keep_day=30
+
+sqlfile=$backupfolder/all-database-$(date +%d-%m-%Y_%H:%M:%S).sql
+zipfile=$backupfolder/all-database-$(date +%d-%m-%Y_%H:%M:%S).zip
+
+# Create a backup
+sudo mysqldump -u ${MYSQL_USER} -p ${MYSQL_PASSWD} --all-databases >$sqlfile
+
+if [ "$?" == 0 ]; then
+  echo 'Sql dump created'
+else
+  echo 'mysqldump return non-zero code'
+  exit
+fi
+
+# Compress backup
+zip "$zipfile" "$sqlfile"
+if [ $? == 0 ]; then
+  echo 'The backup was successfully compressed'
+else
+  echo 'Error compressing backup'
+  exit
+fi
+rm $sqlfile
+echo $zipfile
+
+# Delete old backups
+find $backupfolder -mtime +$keep_day -delete
+
+init_repo() {
+  cd "$1" || exit && echo "can not cd tp $1"
+  git config --global user.name="mednourconsulting"
+  git config --global user.email="mednourconsulting@gmail.com"
+  echo "# backup-mysql-auditnord" >>README.md
+  git init
+  git add README.md
+  git commit -m "first commit"
+  git branch -M main
+  git remote add origin git@github.com:${GIT_USER}/${GIT_REPO}.git
+  cd "${DIR_NAME}" || exit
+}
+git_add_commit_and_push() {
+  git add $1
+  if [[ "$?" -eq 0 ]]; then
+    git commit -m "auditnord mysql backup : $(date +%d-%m-%Y_%H-%M-%S)" $1
+  fi
+  if [[ "$?" -eq 0 ]]; then
+    cd ${backupfolder} && git push -u origin main
+  fi
+}
+if [ -d .git ]; then
+  echo .git
+  init_repo ${backupfolder}
+  git_add_commit_and_push ${backupfolder}
+else
+  git rev-parse --git-dir 2>/dev/null
+  git_add_commit_and_push ${backupfolder}
+fi

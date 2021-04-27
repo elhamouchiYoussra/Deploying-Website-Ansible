@@ -1,0 +1,13 @@
+---
+# tasks file for nginx
+
+- name: add nginx ppa
+  action: apt_repository repo=ppa:nginx/stable state=present
+
+- name: install common packages needed for python application development
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+      - git
+      - nginx

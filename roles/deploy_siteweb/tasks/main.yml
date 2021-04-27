@@ -1,0 +1,34 @@
+---
+# tasks file for deploy_siteweb
+
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Deploy websites  to root dir
+  copy:
+    src: "{{ item }}"
+    dest: "{{ root_dist }}"
+    owner: "{{ nginx_user }}"
+    mode: 0644
+  register: variable
+  with_items:
+    - auditnord
+
+
+- name: Debug
+  debug:
+    var: variable
+
+- name: Copy website conf
+  template:
+    src: config_file/website.conf
+    dest: /etc/nginx/conf.d/{{ item }}.conf
+    backup: yes
+    mode: 0644
+  notify: restart nginx
+  with_items:
+    - auditnord
+
+

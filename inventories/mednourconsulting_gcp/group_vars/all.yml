@@ -1,0 +1,8 @@
+# ssh config conf
+
+ansible_ssh_user_key: /app/secrets/id_rsa
+ansible_ssh_config_file: /app/config
+
+# ssh config file config
+ansible_ssh_user: admin
+env_name: mednourconsulting

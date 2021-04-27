@@ -1,0 +1,12 @@
+
+
+Host {{hostvars[host]['ansible_user']}}
+
+  StrictHostKeyChecking no
+  Hostname {{hostvars[host]['service_ip']}}
+  User {{ hostvars[host]['ansible_user'] }}
+  IdentityFile  {{ ansible_ssh_user_key }}
+
+{% endfor %}
+
+

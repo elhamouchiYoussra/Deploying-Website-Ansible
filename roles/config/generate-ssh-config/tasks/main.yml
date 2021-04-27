@@ -1,0 +1,4 @@
+---
+# tasks file for generate-ssh-
+- include_tasks: "generate-ssh-config.yaml"
+

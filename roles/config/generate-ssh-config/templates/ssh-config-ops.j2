@@ -1,0 +1,24 @@
+Host {% for host in vars['play_hosts'] %} {{hostvars[host]['service_ip']}} {% endfor %}
+
+  StrictHostKeyChecking no
+  User {{ ansible_ssh_user }}
+  IdentityFile  personal_ssh_private_key_file_path
+  ProxyJump bounce-proxy-{{ env_name }}
+
+{% for host in vars['play_hosts'] %} 
+
+Host {{hostvars[host]['inventory_hostname']}}
+
+  StrictHostKeyChecking no
+  Hostname {{hostvars[host]['service_ip']}}
+  User {{ ansible_ssh_user }}
+  IdentityFile  personal_ssh_private_key_file_path
+  ProxyJump bounce-proxy-{{ env_name }}
+{% endfor %}
+
+Host bounce-proxy-{{ env_name }}
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  Hostname {{ bounce_proxy_host }}
+  User personal_user
+  IdentityFile  personal_ssh_private_key_file_path

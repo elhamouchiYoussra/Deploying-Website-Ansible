@@ -1,0 +1,15 @@
+Host {% for host in vars['play_hosts'] %} {{hostvars[host]['service_ip']}} {% endfor %}
+
+  StrictHostKeyChecking no
+  User {{ ansible_ssh_user }}
+  IdentityFile  {{ ansible_ssh_user_key_local }}
+
+{% for host in vars['play_hosts'] %} 
+
+Host {{hostvars[host]['inventory_hostname']}}
+
+  StrictHostKeyChecking no
+  Hostname {{hostvars[host]['service_ip']}}
+  User {{ ansible_ssh_user }}
+  IdentityFile  {{ ansible_ssh_user_key_local }}
+{% endfor %}

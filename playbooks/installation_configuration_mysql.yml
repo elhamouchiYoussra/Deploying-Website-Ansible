@@ -1,0 +1,7 @@
+---
+- name: Install and Config mysql
+  hosts: serveur
+  become: yes
+  become_method: sudo
+  roles:
+    - { role: ../roles/mysql }

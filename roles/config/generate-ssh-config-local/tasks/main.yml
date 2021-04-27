@@ -1,0 +1,4 @@
+---
+# tasks file for generate-ssh-config-local
+- include_tasks: "generate-ssh-config.yaml"
+#  when: create_dns_entries

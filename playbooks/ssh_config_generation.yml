@@ -1,0 +1,49 @@
+---
+- name: Generation ssh config
+  hosts: serveur
+  gather_facts: no
+  become: yes
+  roles:
+    - { role: ../roles/config/generate-ssh-config }
+  post_tasks:
+
+    - name: Add ssh config for the {{ env_name }}
+      run_once: yes
+      connection: local
+      blockinfile:
+        path: $HOME/.ssh/config
+        block: "{{ lookup('file', '{{ ansible_ssh_config_file }}')}}"
+        create: yes
+        state: present
+        marker_begin: "BEGIN {{ env_name }}"
+        marker_end: "END {{ env_name }}"
+
+
+    - name: Add ssh config for the {{ env_name }} for administrators
+      run_once: yes
+      connection: local
+      blockinfile:
+        path: $HOME/.ssh/config-ops
+        block: "{{lookup('file', '{{ ansible_ssh_config_file }}-ops')}}"
+        create: yes
+        state: present
+        marker_begin: "BEGIN {{ env_name }}-ops"
+        marker_end: "END {{ env_name }}-ops"
+
+
+    - name: Change permission for the private key
+      run_once: yes
+      connection: local
+      file:
+        path: "{{ item }}"
+        mode: '0600'
+        with_items:
+          - "{{ ansible_ssh_user_key }}"
+
+
+
+
+
+
+
+

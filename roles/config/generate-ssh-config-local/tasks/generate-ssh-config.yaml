@@ -1,0 +1,9 @@
+---
+
+- name: Generate SSH config | ssh config file local
+  connection: local
+  run_once: yes
+  #become: yes
+  template:
+    src: "ssh-config-local.j2"
+    dest: "{{ ansible_ssh_config_file_admin }}-local"

@@ -1,0 +1,7 @@
+[apps]
+35.199.182.229 ansible_connection=ssh ansible_user=mednourconsulting service_ip=35.199.182.229
+[serveur]
+163.172.100.227 ansible_connection=ssh ansible_user=admin service_ip=163.172.100.227
+
+
+

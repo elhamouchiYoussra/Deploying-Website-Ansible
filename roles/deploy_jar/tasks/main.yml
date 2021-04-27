@@ -1,0 +1,34 @@
+
+---
+# tasks file for deploy-files-jar
+
+- name: upgrade all Ubuntu package
+  apt:
+    upgrade: "dist"
+  when: ansible_distribution == 'Ubuntu'
+
+- name: Update all Ubuntu package
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install required Ubuntu packages
+  apt:
+    name:  "{{ package }}"
+    state: present
+  vars:
+    package:
+      - openjdk-11-jdk
+
+- name: Copy jar files
+  copy:
+    src: " {{ item }}"
+    dest: /opt/{{ app_name }}.jar
+    mode: 0655
+    owner: www-data
+  with_items:
+    - tronico
+    - medical
+    - auditNord
+    - mogue
+    - eci

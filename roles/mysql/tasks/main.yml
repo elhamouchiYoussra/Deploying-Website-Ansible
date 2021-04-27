@@ -1,0 +1,69 @@
+---
+# tasks file for mysql-data
+- name: Updating apt cache
+  apt:
+    update_cache: yes
+  become: yes
+
+
+- name: Install required dependencies
+  apt:
+     name: "{{ item }}"
+     state: present
+  loop:
+     - python
+     - python-setuptools
+     - python-dev
+     - build-essential
+     - python-pip
+     - python-pymysql
+     - python-mysqldb
+
+- name: Add MySQL repository key
+  apt_key:
+      keyserver: pgp.mit.edu
+      id: 5072E1F5
+      state: present
+
+- name: Add official MySQL 5.7 ubuntu bionic repository
+  apt_repository:
+    repo: "deb http://repo.mysql.com/apt/ubuntu bionic mysql-5.7"
+    state: present
+
+- name: Install Mysql dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - mysql-common
+    - mysql-server
+    - mysql-client
+
+- name: Add mysql my.cnf file
+  template:
+    src: templates/my.cnf.j2
+    dest: /etc/mysql/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+
+- name: Start MySQL Service
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: copy inital Mysql client cofig file, no password for root
+  copy:
+    src: config_file/.my.cnf
+    dest: /root/.my.cnf
+
+- name: Create the MySQL database
+  become: true
+  mysql_db:
+       name: "{{ database_name }}"
+       state: present
+       login_user: root
+       login_password: "{{ mysql_root_password }}"
+
