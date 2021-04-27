@@ -1,1 +1,1 @@
-# Deploying a Websites using Ansible technology 
+# Deploying Websites using Ansible Technology 
